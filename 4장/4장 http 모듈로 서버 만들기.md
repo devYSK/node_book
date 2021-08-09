@@ -207,6 +207,69 @@ http.createServer((req, res) => {
   * 안전하게 사용하기 위해 다른 모듈을 사용한다.
 
 
+# 4.4 https와 http2
+
+* https 모듈 : 웹 서버에 SSL 암호화를 추가하는 모듈 
+
+```javascript
+
+const https = require('https');
+const fs = require('fs');
+
+https.createServer({
+    cert : fs.readFileSync('도메인 인증서 경로'),
+    key: fs.readFileSync('도메인 비밀키 경로'),
+    ca: [
+        fs.readFileSync('상위 인증서 경로'),
+        fs.readFileSync('상위 인증서 경로'),
+    ],
+}, (req, res) => {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8'});
+    res.write('<h1>Hello</h1>');
+    res.end('<p>Server!</p>');
+})
+    .listen(443, () => {
+        console.log('443번 포트에서 서버 대기중');
+    });
+```
+
+* http 서버를 https 서버로
+  * 암호화를 위해 인증서가 필요한데 발급받아야 함
+  * 443번 포트 사용 
 
 
+* createServer가 인자를 두 개 받음
+  *  첫 번째 인자는 인증서와 관련된 옵션 객체
+  * pem, crt, key 등 인증서를 구입할 때 얻을 수 있는 파일 넣기
+  * 두 번째 인자는 서버 로직
 
+## http2도 https랑 거의 유사하다
+* https 모듈을 http2로,
+* createServer 메서드를 createSecureServer로 바꾸면 끝 
+
+# 4.5 cluster
+
+* 기본적으로 싱글 스레드인 노드가 CPU 코어를 모두 사용할 수 있게 해주는 모듈
+  * 포트를 공유하는 노드 프로세스를 여러 개 둘 수 있음
+  
+  * 요청이 많이 들어왔을 때 병렬로 실행된 서버의 개수만큼 요청이 분산됨
+    
+  * 서버에 무리가 덜 감
+    
+  * 코어가 8개인 서버가 있을 때: 보통은 코어 하나만 활용
+    
+  * cluster로 코어 하나당 노드 프로세스 하나를 배정 가능
+    
+  * 성능이 8배가 되는 것은 아니지만 개선됨
+    
+  * 단점: 컴퓨터 자원(메모리, 세션 등) 공유 못 함
+    
+  * Redis 등 별도 서버로 해결
+  
+# 4.6 함께 보면 좋은 자료
+
+* http 모듈 소개 : https://nodejs.org/dist/latest-v14.x/docs/api/http.html
+* https:/developer.mozilla.org/ko/docs/Web/HTTP/Cookies
+* https:/developer.mozilla.org/ko/docs/Web/HTTP/Session
+* https 모듈 소개 : https://nodejs.org/dist/latest-v14.x/docs/api/https.html
+* http2 모듈 소개 : https://nodejs.org/dist/latest-v14.x/docs/api/http2.html
