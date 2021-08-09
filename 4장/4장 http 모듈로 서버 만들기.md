@@ -150,4 +150,63 @@ http.createServer(async (req, res) => {
   * Response Headers: 응답 헤더
   * Request Payload : 요청 본문 
 
+# 4.3 쿠키와 세션 이해하기
+
+* 쿠키 : 키=값의 쌍
+  * name : youngsoo223
+  * 매 요청마다 서버에 동봉해서 보냄 -> 서버는 쿠키를 읽어서 사용자가 누구인지 파악 
+  * 쿠키는 요청의 헤더(Cookie)에 담겨 전송.
+  * 브라우저는 응답의 헤더(Set-Cookie)에 따라 쿠키 저장
+
+```javascript
+const http = require('http');
+
+http.createServer((req, res) => {
+    console.log(req.url, req.headers.cookie);
+
+    res.writeHead(200, { 'Set-Cookie' : 'mycookie=test'});
+    res.end('Hello Cookie');
+})
+    .listen(8083, () => {
+        console.log('8083번 포트에서 서버 대기중');
+    });
+```
+
+* req.headers.cookie : 쿠키가 문자열로 담겨있음
+* req.url : 요청 주소 
+* req 객체에 쿠키가 들어있다.
+
+* req.writeHead : 응답의 헤더에 데이터 담기. 
+
+* fabicon.io란? : 웹 사이트 탭에 보여지는 이미지. 
+
+## 쿠키 옵션
+
+* 쿠키에는 한글과 줄바꿈이 들어가면 안된다.
+  * 한글은 encodeURIComponent로 감싸서 넣어야 한다. 
+
+* Set-Cookie 시 다양한 옵션이 있음
+  * 쿠키명=쿠키값: 기본적인 쿠키의 값입니다. mycookie=test 또는 name=zerocho 같이 설정합니다.
+  * Expires=날짜: 만료 기한입니다. 이 기한이 지나면 쿠키가 제거됩니다. 기본값은 클라이언트가 종료될 때까지입니다.
+  * Max-age=초: Expires와 비슷하지만 날짜 대신 초를 입력할 수 있습니다. 해당 초가 지나면 쿠기가 제거됩니다. Expires보다 우선합니다.
+  * Domain=도메인명: 쿠키가 전송될 도메인을 특정할 수 있습니다. 기본값은 현재 도메인입니다.
+  * Path=URL: 쿠키가 전송될 URL을 특정할 수 있습니다. 기본값은 ‘/’이고 이 경우 모든 URL에서 쿠키를 전송할 수 있습니다.
+  * Secure: HTTPS일 경우에만 쿠키가 전송됩니다.
+  * HttpOnly: 설정 시 자바스크립트에서 쿠키에 접근할 수 없습니다. 쿠키 조작을 방지하기 위해 설정하는 것이 좋습니다.
+
+## 세션
+
+* 쿠키의 정보는 노출되고 수정되는 위험이 있다.
+* 그래서 나온 방법이 세션이다.
+  * 중요한 정보는 서버에서 관리하고 클라이언트에는 세션 키(세션아이디) 만 제공
+  * 서버에 세션 객체(session) 생성 후 uniqueInt(키)를 만들어 속성명으로 사용
+  * 속성 값에 정보 저장하고 uniqueInt를 클라이언트로 보냄
+
+* 세션을 위해 사용하는 쿠키를 세션 쿠키라고 한다
+* 보통 레디스나 멤캐시드 같은 데이터베이스에 넣어둔다.
+  * 안전하게 사용하기 위해 다른 모듈을 사용한다.
+
+
+
+
 
