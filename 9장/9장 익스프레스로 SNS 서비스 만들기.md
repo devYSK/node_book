@@ -188,3 +188,27 @@ module.exports = () => {
 * ![](images/02a38d85.png)
 
 
+# 스스로해보기
+
+1. 팔로잉 끊기(시퀄라이즈의 destroy 메서드와 라우터 활용)
+2. 프로필 정보 변경하기(시퀄라이즈의 update 메서드와 라우터 활용)
+3. 게시글 좋아요 누르기 및 좋아요 취소하기(사용자-게시글 모델 간 N:M 관계 정립 후 라우터 활용)
+4. 게시글 삭제하기(등록자와 현재 로그인한 사용자가 같을 때, 시퀄라이즈의 destroy 메서드와 라우터 활용)
+5. 매번 데이터베이스를 조회하지 않도록 ㅇeserializeUser 캐싱하기(객체 선언 후 객체에 사용자 정보 저장, 객체 안에 캐싱된 값이 있으면 조회)
+
+# 핵심 정리!!!!!!!!!11
+
+1. 서버는 요청에 응답하는 것이 핵심 임무이므로 요청을 수락하든 거절하든 상관없이 반드시 응답.
+2. 개발 시 서버를 매번 수동으로 재시작하지 않으려면 nodemon 을 사용하는것이 좋다
+3. dotenv 패키지와 .env 파일로 유촐되면 안되는 비밀 키를 관리하자
+4. 라우터는 routes 폴더에, 데이터베이스는 models 폴더에, html파일은 view 폴더에 구분하여 저장해야 관리가 쉽다
+5. 데이터 베이스를 구성하기 전 데이터간 1:1, 1:N, N:M 관계를 잘 파악하자
+6. routes/middlewares.js처럼 라우터 내에 미들웨어를 사용할 수 있다는 것을 기억하자
+7. Pasport의 인증 과정을 기억해두자. 특히 serializeUser와 deserializeUser가 언제 호출되는지 파악하고 있어야 한다
+8. 프런트엔드  form 태그의 인코딩 방식이 multipart 일 때는 multer 같은 multipart 처리 용 패키지를 사용하는것이 좋다. 
+
+* Passport : http://www.passportjs.org
+* bcrypt: https://wwww.npmjs.com/package/bcrypt
+* 카카오 로그인 : https://developers.kakao.com/docs/latest/ko/kakaologin/common
+
+
