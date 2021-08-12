@@ -10,6 +10,8 @@ const passport = require('passport');
 
 const pageRouter = require('./routes/page');
 const authRouter = require('./routes/auth');
+const postRouter = require('./routes/post');
+const userRouter = require('./routes/user');
 
 const { sequelize } = require('./models');
 const passportConfig = require('./passport');
@@ -52,13 +54,15 @@ app.use(session({
         secure: false,
     },
 }));
+app.use('/img', express.static(path.join(__dirname, 'uploads')));
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/', pageRouter);
 app.use('/auth', authRouter);
-
+app.use('/post', postRouter);
+app.use('/user', userRouter);
 
 app.use((req, res, next) => {
     const error = new Error(`${req.method} ${req.url} 라우터가 없습니다`);

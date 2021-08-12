@@ -156,3 +156,35 @@ module.exports = () => {
 * 페이스북 : passport-facebook
 * 네이버 : passport-naver
 * 트위터 : passport-twitter 
+
+# multer 패키지 - 이미지 업로드
+
+* npm i multer
+
+* form 태그의 enctype이 multipart/form-data
+  * body-parser로는 요청 본문을 해석할 수 없음
+  * multer 패키지 필요
+  * 이미지를 먼저 업로드하고, 이미지가 저장된 경로를 반환할 것임
+  * 게시글 form을 submit할 때는 이미지 자체 대신 경로를 전송
+
+* fs.readdir, fs.mkdirSync로 upload 폴더가 없으면 생성
+* multer() 함수로 업로드 미들웨어 생성
+  * storage: diskStorage는 이미지를 서버 디스크에 저장(destination은 저장 경로, filename은 저장 파일명)
+  * limits는 파일 최대 용량(5MB)
+
+  * upload.single(‘img’): 요청 본문의 img에 담긴 이미지 하나를 읽어 설정대로 저장하는 미들웨어
+
+  * 저장된 파일에 대한 정보는 req.file 객체에 담김
+
+* 실제 서버 운영시에는 s3나 클라우드 스토리지 같은 서비스를 이용하는게 좋다
+
+## 3. 게시글 등록
+
+* upload2.none()은 multipart/formdata 타입의 요청이지만 이미지는 없을 때 사용
+  * 게시글 등록 시 아까 받은 이미지 경로 저장
+  * 게시글에서 해시태그를 찾아서 게시글과 연결(post.addHashtags)
+  * findOrCreate는 기존에 해시태그가 존재하면 그걸 사용하고, 없다면 생성하는 시퀄라이즈 메서드
+
+* ![](images/02a38d85.png)
+
+

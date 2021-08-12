@@ -31,12 +31,14 @@ const upload = multer({
 
 router.post('/img', isLoggedIn, upload.single('img'), (req, res) => {
     console.log(req.file);
-    res.josn({url: `/img/${req.file.filename}`});
+    res.json({url: `/img/${req.file.filename}`});
 });
 
 const upload2 = multer();
 
 router.post('/', isLoggedIn, upload2.none(), async (req, res, next) => {
+
+
     try {
         const post = await Post.create({
             content: req.body.content,
