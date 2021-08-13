@@ -95,3 +95,100 @@ const token = jwt.sign({
   * RSA같은 양방향 비대칭 암호화 알고리즘을 사용해야 함
   * JWT는 PEM 키를 사용해서 양방향 암호화를 하는 것을 지원함
   * 공식문서 : https://www.npmjs.com/package/jsonwebtoken
+
+
+# 사용량 제한 구현하기
+
+* DOS 공격 등을 대비해야 함
+  * 일정 시간동안 횟수 제한을 두어 무차별적인 요청을 막을 필요가 있음
+  * npm i express-rate-limit
+  * apiLimiter 미들웨어 추가
+  * windowMS(기준 시간), max(허용 횟수), delayMS(호출 간격), handler(제한 초과 시 콜백 함수)
+  * deprecated 미들웨어는 사용하면 안 되는 라우터에 붙여서 사용 시 경고
+```javascript
+const RateLimit = require('express-rate-limit');
+
+exports.apiLimiter = new RateLimit({
+    windowMs: 60 * 1000, //1분
+    max: 1,
+    delayMs: 0,
+    handler(req, res) {
+        res.status(this.statusCode).json({
+            code: this.statusCode, // 기본값 429
+            message: '1분에 1번만 요청 가능',
+        });
+    },
+});
+
+exports.deprecated = (req, res) => {
+    res.status(410).json({
+        code: 410,
+        message: '새로운 버전이 나옴! 새버전을 사용하쎼용',
+    });
+};
+```
+
+# CORS 이해하기
+
+* 프런트에서 서버의 API를 호출했을떄 에러 발생!
+* 요청을 보내는 프런트(localhost:4000), 요청을 받는 서버(localhost:8002)가 다르면 에러 발생(서버에서 서버로 요청을 보낼때는 발생하지 않음)
+  * CORS: Cross-Origin Resource Sharing 문제
+  * POST 대신 OPTIONS 요청을 먼저 보내 서버가 도메인을 허용하는지 미리 체크
+  * ![](images/38837ba7.png)
+
+# CORS 해결 방법
+
+* Access-Control-Allow-Origin 응답 헤더를 넣어주어야 CORS 문제 해결 가능
+  * res.set 메서드로 직접 넣어주어도 되지만 패키지를 사용하는게 편리
+  * npm i cors
+  * v2 라우터에 적용
+  * credentials: true를 해야 프런트와 백엔드 간에 쿠키가 공유됨
+  * axios에서도 도메인이 다른데 쿠키를 공유해야 하는 경우 `withCredentials: true` 옵션을 줘서 요청을 보내야 한다. 
+  * 
+
+```javascript
+// nodebird-api/route/v2.js
+...
+const cors = require('cors');
+...
+
+router.use(cors({
+  credentials:true,
+}));
+...
+```
+
+### 클라이언트 도메인 검사
+
+* 클라이언트 환경에서는 비밀키가 노출됨
+  * 도메인까지 같이 검사해야 요청 인증 가능
+
+  * 호스트와 비밀키가 모두 일치할 때만 CORS를 허용
+
+  * 클라이언트의 도메인(req.get(‘origin’))과 등록된 호스트가 일치하는 지 찾음
+
+  * url.parse().host는 http같은 프로토콜을 떼어내기 위함
+
+  * cors의 인자로 origin을 주면 * 대신 주어진 도메인만 허용할 수 있음
+
+# 프록시 서버
+
+* CORS를 해결하는 또 다른 방법
+  * 서버-서버 간의 요청/응답에는 CORS 문제가 발생하지 않는 것을 활용
+  * 직접 구현해도 되지만 http-proxy-middleware같은 패키지로 손쉽게 연동 가능
+  * ![](images/690ba36d.png)
+
+# 스스로 프로젝트 마무리해보기 
+
+* 팔로워나 팔로잉 목록을 가져오는 api 만들기(nodebirde-api에 새 라우터 추가)
+* 무료 도메인과 프리미엄 도메인 간에 사용량 제한을 다르게 적용(apiLimiter를 두 개만들어서 도메인별로 다르게 적용 9.3.1절의 POST /auth/login 라우터 참조)
+* 클라이언트용 비밀 키와 서버용 비밀 키를 구분해서 발급(Domain모델 수정)
+* 클라이언트를 위해 API 문서 작성(swagger나 apidoc 사용)
+
+
+# 핵심 정리 
+* API 사용자가 API를 쉽게 사용할 수 잇도록 사용 방법, 요청 형식, 응답 내용에 관한 문서를 준비
+* JWT 토큰의 내용은 공개되며 변조될 수 있다. 시그니처를 확인하면 변조되었는지 체크할 수 있따.
+* 토큰을 사용하여 API의 오남용을 막는다 요청 헤더에 토큰이 있는지를 확인
+* app.use 외에도 router.use를 활용하여 라우터간에 공통되는 로직 처리 가능
+* cors나 passport.authenticate처럼 미들웨어 내에서 미들웨어 실행 가능
