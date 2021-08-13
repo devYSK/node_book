@@ -55,7 +55,7 @@ router.get('/posts/my', verifyToken, (req, res) => {
     Post.findAll({ where: { userId: req.decoded.id }})
         .then((posts) => {
             console.log(posts);
-            res.josn({
+            res.json({
                 code: 200,
                 payload: posts,
             });
