@@ -22,7 +22,7 @@ const app = express();
 passportConfig();
 
 
-app.set('port', process.env.PORT || 8001);
+app.set('port', process.env.PORT || 8002);
 app.set('view engine', 'html');
 nunjucks.configure('views', {
     express: app,
@@ -81,4 +81,6 @@ app.use((err, req, res, next) => {
 app.listen(app.get('port'), () => {
     console.log(app.get('port'), '번 포트에서 대기');
 });
+
+module.exports = app;
 

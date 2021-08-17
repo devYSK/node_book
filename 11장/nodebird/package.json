@@ -4,9 +4,9 @@
   "description": "익스프레스로 만드느 SNS 서비스",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon app",
+    "start": "nodemon server",
     "test": "jest",
-    "coverage" : "jest --coverage"
+    "coverage": "jest --coverage"
   },
   "author": "ysk",
   "license": "MIT",
@@ -25,7 +25,8 @@
     "passport-kakao": "^1.0.1",
     "passport-local": "^1.0.0",
     "sequelize": "^6.6.5",
-    "sequelize-cli": "^6.2.0"
+    "sequelize-cli": "^6.2.0",
+    "yargs": "^17.1.1"
   },
   "devDependencies": {
     "nodemon": "^2.0.12"
