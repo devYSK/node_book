@@ -58,7 +58,7 @@ describe('POST /login', () => {
                 email: 'kim@naver.com',
                 password: '303ehd',
             })
-            .expect('Location', `/?loginError=${message}`)
+            .expect('Location', `/`)
             .expect(302, done);
     });
 
