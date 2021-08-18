@@ -12,6 +12,7 @@ const indexRouter = require('./routes/index');
 const authRouter = require('./routes/auth');
 const { sequelize} = require('./models');
 const passportConfig = require('./passport');
+const checkAuction = require('./checkAuction');
 
 //sse
 const sse = require('./sse');
@@ -19,6 +20,8 @@ const webSocket = require('./socket');
 
 const app = express();
 passportConfig();
+checkAuction();
+
 app.set('port', process.env.PORT || 8010);
 app.set('view engine', 'html');
 
