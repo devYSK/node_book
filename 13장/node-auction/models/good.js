@@ -7,18 +7,15 @@ module.exports = class Good extends Sequelize.Model {
                 type: Sequelize.STRING(40),
                 allowNull: false,
             },
-
             img: {
                 type: Sequelize.STRING(200),
                 allowNull: true,
             },
-
             price: {
                 type: Sequelize.INTEGER,
                 allowNull: false,
                 defaultValue: 0,
             },
-
         }, {
             sequelize,
             timestamps: true,
@@ -31,8 +28,8 @@ module.exports = class Good extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Good.belongsTo(db.User, { as:'Owner'});
-        db.Good.belongsTo(db.User, { as: 'Sold'});
+        db.Good.belongsTo(db.User, { as: 'Owner' });
+        db.Good.belongsTo(db.User, { as: 'Sold' });
         db.Good.hasMany(db.Auction);
     }
 };
